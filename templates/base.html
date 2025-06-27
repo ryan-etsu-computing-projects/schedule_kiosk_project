@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Schedule Kiosk{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .kiosk-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .current-time {
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .slide-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            padding: 20px;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Today's Schedule Styles */
+        .today-schedule {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 10px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .time-slot {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            text-align: right;
+            font-size: 0.9rem;
+            min-height: 60px; /* Increased height for better spacing */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .session-slot {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 60px; /* Match the time slot height */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .session-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden; /* Prevent text overflow */
+            flex: 1;
+        }
+
+        .session-card .course-code {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #FFD700;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .session-card .title {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin: 4px 0;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .session-card .instructor {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .session-card .location {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            color: #87CEEB;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Weekly Schedule Styles */
+        .weekly-schedule {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .weekly-grid {
+            display: grid;
+            grid-template-columns: 100px repeat(auto-fit, 1fr);
+            gap: 8px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .weekly-grid.three-day {
+            grid-template-columns: 100px repeat(3, 1fr);
+        }
+
+        .weekly-grid.two-day {
+            grid-template-columns: 100px repeat(2, 1fr);
+        }
+
+        .day-header {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .weekly-time-slot {
+            padding: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 50px; /* Consistent height */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .weekly-session-slot {
+            padding: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 50px; /* Match time slot height */
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .weekly-session-card {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+            padding: 8px;
+            backdrop-filter: blur(5px);
+            font-size: 0.8rem;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .weekly-session-card .course-code {
+            font-weight: bold;
+            color: #FFD700;
+            font-size: 0.85rem;
+            line-height: 1.2;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .weekly-session-card .location {
+            color: #87CEEB;
+            font-size: 0.7rem;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Slide indicators */
+        .slide-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: background 0.3s;
+        }
+
+        .indicator.active {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Current time indicator */
+        .current-time-indicator {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #FF6B6B;
+            z-index: 10;
+            opacity: 0.8;
+        }
+
+        .current-time-indicator::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            background: #FF6B6B;
+            border-radius: 50%;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 1.5rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Admin styles */
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .upload-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .file-list {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .file-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-info h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .file-meta {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
