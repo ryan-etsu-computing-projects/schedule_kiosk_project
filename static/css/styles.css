@@ -3,11 +3,11 @@
 
 :root {
     /* Font-families */
-    --ff-serif: "Bellefair", serif;
-    --ff-script: "Courgette", serif;
+    --ff-serif: "Bellefair", sans-serif;
+    --ff-script: "Courgette", sans-serif;
     --ff-sans-cond: "Barlow Condensed", sans-serif;
     --ff-sans-normal: "Barlow", sans-serif;
-    --ff-text-me-one: "Text Me One", serif;
+    --ff-text-me-one: "Text Me One", sans-serif;
 }
 
 body {
