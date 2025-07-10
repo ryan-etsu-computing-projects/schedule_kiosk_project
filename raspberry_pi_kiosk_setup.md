@@ -180,10 +180,10 @@ Edit `/home/pi/.config/lxsession/LXDE-pi/autostart`:
 
 ### 1. Configure Boot Options
 
-Edit `/boot/firmware/config.txt` to optimize for kiosk display:
+Edit `/boot/config.txt` to optimize for kiosk display:
 
 ```bash
-sudo nano /boot/firmware/config.txt
+sudo nano /boot/config.txt
 ```
 
 Add or modify these settings:
