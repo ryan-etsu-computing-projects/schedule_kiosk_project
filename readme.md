@@ -12,7 +12,6 @@ A Flask-based web application that displays university course schedules, lab ses
 - **Smart Pagination**: Automatically creates slides to handle busy days with many events
 - **Time-based Announcements**: Displays relevant announcements based on current date
 - **Responsive Design**: Clean, readable interface suitable for kiosk displays
-- **Multiple View Modes**: Both paginated and simple view options
 - **Raspberry Pi Ready**: Automated installation script for dedicated kiosk deployment
 
 ## Quick Start
@@ -59,8 +58,7 @@ A Flask-based web application that displays university course schedules, lab ses
    ```
 
 7. **Access the kiosk display**:
-   - Main display (paginated): http://localhost:5000
-   - Simple display: http://localhost:5000/simple
+   - http://localhost:5000
 
 ### For Raspberry Pi Kiosk Deployment
 
