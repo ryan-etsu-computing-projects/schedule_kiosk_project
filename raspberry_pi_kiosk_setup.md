@@ -180,10 +180,10 @@ Edit `/home/pi/.config/lxsession/LXDE-pi/autostart`:
 
 ### 1. Configure Boot Options
 
-Edit `/boot/config.txt` to optimize for kiosk display:
+Edit `/boot/firmware/config.txt` to optimize for kiosk display:
 
 ```bash
-sudo nano /boot/config.txt
+sudo nano /boot/firmware/config.txt
 ```
 
 Add or modify these settings:
@@ -276,10 +276,10 @@ ls -la /home/pi/start_kiosk.sh
 
 ### Force HDMI Output
 
-If your display doesn't show anything or you're having HDMI detection issues, add this line to `/boot/config.txt`:
+If your display doesn't show anything or you're having HDMI detection issues, add this line to `/boot/firmware/config.txt`:
 
 ```bash
-sudo nano /boot/config.txt
+sudo nano /boot/firmware/config.txt
 ```
 
 Add:

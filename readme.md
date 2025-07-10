@@ -96,10 +96,10 @@ The installation script will:
 
 #### HDMI Display Issues?
 
-If your Raspberry Pi doesn't output to HDMI properly (especially with KVM switches, splitters, or some monitors), add this line to `/boot/config.txt`:
+If your Raspberry Pi doesn't output to HDMI properly (especially with KVM switches, splitters, or some monitors), add this line to `/boot/firmware/config.txt`:
 
 ```bash
-sudo nano /boot/config.txt
+sudo nano /boot/firmware/config.txt
 ```
 
 Add:
@@ -268,7 +268,7 @@ The application can be extended to read from databases or other data sources by 
 
 1. **Service won't start**: Check logs with `sudo journalctl -u kiosk-display`
 2. **Chromium won't launch**: Verify the start script is executable and Flask service is running
-3. **No HDMI output**: Add `hdmi_force_hotplug=1` to `/boot/config.txt` and reboot
+3. **No HDMI output**: Add `hdmi_force_hotplug=1` to `/boot/firmware/config.txt` and reboot
 4. **Display turns off**: The installation script disables screen savers, but some displays may still power down
 
 ### Debug Mode
