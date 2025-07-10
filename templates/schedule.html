@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Schedule</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" integrity="sha384-7qAoOXltbVP82dhxHAUje59V5r2YsVfBafyUDxEdApLPmcdhBPg1DKg1ERo0BZlK" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+    .floating-clock {
+        position: fixed;
+        top: 4px;
+        left: 15px;
+        max-width: fit-content;
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: white;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-family: 'Courier New', monospace;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        user-select: none;
+        transition: all 0.3s ease;
+    }
+
+    .floating-clock:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .clock-time {
+        font-size: 1.8em;
+        font-weight: bold;
+        text-align: center;
+        line-height: 1;
+        color: #ecf0f1;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .clock-period {
+        font-size: 0.9em;
+        text-align: center;
+        margin-top: 2px;
+        color: #bdc3c7;
+        font-weight: 500;
+    }
+
+    .floating-clock.lcd {
+        background: #000;
+        color: #00ff00;
+        border: 3px solid #333;
+        font-family: 'Courier New', monospace;
+        box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+
+    .floating-clock.lcd .clock-time {
+        color: #00ff00;
+        text-shadow: 0 0 5px #00ff00;
+    }
+
+    .floating-clock.lcd .clock-period {
+        color: #00aa00;
+    }
+    */
+
+    .floating-clock.glass {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    /* Compact style */
+
+    .floating-clock.compact {
+        padding: 8px 12px;
+        border-radius: 20px;
+    }
+
+    .floating-clock.compact .clock-time {
+        font-size: 1.4em;
+    }
+
+    .floating-clock.compact .clock-period {
+        display: inline;
+        margin-left: 4px;
+        font-size: 0.8em;
+    }
+    */
+    </style>
+</head>
+<body>
+    <img class="d-inline" style="width: 6%;float: right;top:1px;" src="https://csci-1100.github.io/class_resources_public/uit_website/img/uit-logo.png" alt="CSCI 1100">
+    <h1 class="text-white" style="margin-bottom: 0;">Using Information Technology Schedule</h1>
+    <!-- Floating Clock -->
+    <div id="floating-clock" class="floating-clock large university-pulse glass">
+        <div class="clock-time">
+            <span id="clock-hours">12</span>:<span id="clock-minutes">00</span>
+            <span class="clock-period" id="clock-period">PM</span>
+        </div>
+    </div>
+    <div class="main-container">
+        <div class="slide-container">
+            <!-- Slide Progress Indicator -->
+            <div class="slide-progress">
+                <span id="current-slide">1</span> / <span id="total-slides">{{ slides|length }}</span>
+            </div>
+            
+            {% for slide in slides %}
+            <div class="slide {% if loop.first %}active{% endif %}">
+                {% if slide.days|length == 1 and slide.events[slide.days[0]]|length > 8 %}
+                    <!-- Single day with more than 5 events - split into columns -->
+                    <div class="screen-2-col">
+                        {% set day = slide.days[0] %}
+                        {% set events = slide.events[day] %}
+                        
+                        <!-- First column (events 0-4) -->
+                        <div class="day-column">
+                            <h2>{{ day }}</h2>
+                            {% for event in events[:8] %}
+                            <div class="event {{ event.type | lower }}">
+                                <div class="row">
+                                    <div class="col-60">
+                                        <span class="title">{{ event.title }}</span>
+                                    </div>
+                                    <div class="col-40">
+                                        <i class="bi bi-person-fill"></i>&ensp;<span class="instructor">{{ event.instructor }}</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-60">    
+                                        <i class="bi bi-clock"></i>&ensp;<span class="time">{{ event.time }}</span>
+                                    </div>
+                                    <div class="col-40">
+                                        <i class="bi bi-geo-alt"></i>&ensp;<span class="location">{{ event.location }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Second column (events 8+) -->
+                        <div class="day-column">
+                            <h2>{{ day }}, continued</h2>
+                            {% for event in events[8:] %}
+                            <div class="event {{ event.type | lower }}">
+                                <div class="row">
+                                    <div class="col-60">
+                                        <span class="title">{{ event.title }}</span>
+                                    </div>
+                                    <div class="col-40">
+                                        <i class="bi bi-person-fill"></i>&ensp;<span class="instructor">{{ event.instructor }}</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-60">    
+                                        <i class="bi bi-clock"></i>&ensp;<span class="time">{{ event.time }}</span>
+                                    </div>
+                                    <div class="col-40">
+                                        <i class="bi bi-geo-alt"></i>&ensp;<span class="location">{{ event.location }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Normal multi-day layout -->
+                    <div class="{{ slide.type }}">
+                        {% for day in slide.days %}
+                        <div class="day-column">
+                            <h2>{{ day }}</h2>
+                            {% for event in slide.events[day] %}
+                            <div class="event {{ event.type | lower }}">
+                                <div class="row">
+                                    <div class="col-60">
+                                        <span class="title">{{ event.title }}</span>
+                                    </div>
+                                    <div class="col-40">
+                                        <i class="bi bi-person-fill"></i>&ensp;<span class="instructor">{{ event.instructor }}</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-60">    
+                                        <i class="bi bi-clock"></i>&ensp;<span class="time">{{ event.time }}</span>
+                                    </div>
+                                    <div class="col-40">
+                                        <i class="bi bi-geo-alt"></i>&ensp;<span class="location">{{ event.location }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Slide Indicators -->
+        {% if slides|length > 1 %}
+        <div class="slide-indicator">
+            {% for slide in slides %}
+            <span class="dot {% if loop.first %}active{% endif %}" data-slide="{{ loop.index0 }}"></span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Sidebar for additional content -->
+        <div class="sidebar">
+            <div class="sidebar-slide announcement">
+                <h3>📢 Announcements</h3>
+                {% if current_announcement %}
+                <p class="sidebar-slide-subtitle" id="announcement-title">{{ current_announcement.title }}</p>
+                <p id="announcement">{{ current_announcement.announcement }}</p>
+                {% else %}
+                <p class="sidebar-slide-subtitle" id="announcement-title">Week 1: Intro, Information Literacy</p>
+                <p id="announcement">This week we will introduce the course and begin our first module -- Information Literacy. We're all drowing in information,
+                    so we'll learn a quick process for evaluating the claims we see in posts and memes.
+                </p>
+                {% endif %}
+            </div>
+            
+            <div class="sidebar-slide weather">
+                <h3>🦆 Duck(s) of the Hour</h3>
+                <div id="duck-container" style="width: 100%; height: 75%; display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+                    <img id="duck-image" src="" alt="Loading duck..." style="max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain;">
+                </div>
+                <div style="font-size: 0.6em; opacity: 0.6;">Powered by random-d.uk&ensp;•&ensp;<span id="duck-status" style="opacity: 0.8;">Loading duck...</span></div>
+            </div>
+            
+            <div class="sidebar-slide info">
+                <h3>💡 Quick Info</h3>
+                <p class="sidebar-slide-subtitle">CSCI Helpdesk Hours</p>
+                <p>Mon-Thu: 10a-4:30p&ensp;•&ensp;Fri: 11a-4:30p<br>
+                <p class="sidebar-slide-subtitle">ITS Helpdesk Contact</p>
+                <p>📞 (423) 439-4648&ensp;•&ensp;📧 itshelp@etsu.edu</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        const currentSlideSpan = document.getElementById('current-slide');
+        const totalSlidesSpan = document.getElementById('total-slides');
+        
+        let currentSlide = 0;
+        const slideInterval = 8000; // 8 seconds per slide
+        let autoAdvanceTimer;
+        
+        totalSlidesSpan.textContent = slides.length;
+        
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Show current slide
+            slides[index].classList.add('active');
+            if (dots[index]) {
+                dots[index].classList.add('active');
+            }
+            
+            // Update counter
+            currentSlideSpan.textContent = index + 1;
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+        
+        function startAutoAdvance() {
+            if (slides.length > 1) {
+                autoAdvanceTimer = setInterval(nextSlide, slideInterval);
+            }
+        }
+        
+        function stopAutoAdvance() {
+            if (autoAdvanceTimer) {
+                clearInterval(autoAdvanceTimer);
+            }
+        }
+
+        // Duck image functionality
+        async function fetchRandomDuck() {
+            const duckImage = document.getElementById('duck-image');
+            const duckStatus = document.getElementById('duck-status');
+            
+            try {
+                duckStatus.textContent = 'Fetching new duck...';
+                
+                const response = await fetch('https://corsproxy.io/?https://random-d.uk/api/random');
+                const data = await response.json();
+                
+                if (data.url) {
+                    // Create a new image element to preload
+                    const newImage = new Image();
+                    console.log(data.url);
+                    newImage.onload = function() {
+                        duckImage.src = data.url;
+                        duckImage.alt = 'Random duck image';
+                        const now = new Date();
+                        duckStatus.textContent = `Updated: ${now.toLocaleTimeString()}`;
+                    };
+                    newImage.onerror = function() {
+                        duckStatus.textContent = 'Duck loading failed, trying again...';
+                        // Retry after 5 seconds if image fails to load
+                        setTimeout(fetchRandomDuck, 5000);
+                    };
+                    newImage.src = data.url;
+                } else {
+                    throw new Error('No URL in response');
+                }
+            } catch (error) {
+                console.error('Error fetching duck:', error);
+                duckStatus.textContent = 'Duck loading failed, will retry...';
+                // Retry after 30 seconds on API error
+                setTimeout(fetchRandomDuck, 30000);
+            }
+        }
+        
+        // Initialize duck
+        fetchRandomDuck();
+        // Set up duck refresh every 60 minutes (3600000 ms)
+        setInterval(fetchRandomDuck, 3600000);
+        
+        // Start auto-advance
+        startAutoAdvance();
+        
+        // Click dots to navigate (and reset auto-advance)
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
+                stopAutoAdvance();
+                startAutoAdvance(); // Restart timer
+            });
+        });
+        
+        // Pause auto-advance on hover
+        const slideContainer = document.querySelector('.slide-container');
+        slideContainer.addEventListener('mouseenter', stopAutoAdvance);
+        slideContainer.addEventListener('mouseleave', startAutoAdvance);
+        
+        // Keyboard navigation (optional)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+                stopAutoAdvance();
+                startAutoAdvance();
+            } else if (e.key === 'ArrowRight') {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+                stopAutoAdvance();
+                startAutoAdvance();
+            }
+        });
+
+        // Add this JavaScript to your schedule.html template
+
+        // Function to parse time strings like "08:55 am-10:15 am" or "01:40 pm-03:00 pm"
+        function parseTimeRange(timeString) {
+            const [startTime, endTime] = timeString.split('-');
+            
+            function parseTime(timeStr) {
+                const [time, period] = timeStr.trim().split(' ');
+                const [hours, minutes] = time.split(':').map(Number);
+                
+                let hour24 = hours;
+                if (period.toLowerCase() === 'pm' && hours !== 12) {
+                    hour24 += 12;
+                } else if (period.toLowerCase() === 'am' && hours === 12) {
+                    hour24 = 0;
+                }
+                
+                return { hours: hour24, minutes };
+            }
+            
+            return {
+                start: parseTime(startTime),
+                end: parseTime(endTime)
+            };
+        }
+
+        // Function to check if current time is within a time range
+        function isTimeInRange(timeRange, currentTime) {
+            const startMinutes = timeRange.start.hours * 60 + timeRange.start.minutes;
+            const endMinutes = timeRange.end.hours * 60 + timeRange.end.minutes;
+            const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+            
+            return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+        }
+
+        // Function to get current day of week (matching your template format)
+        function getCurrentDayName() {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            return days[new Date().getDay()];
+        }
+
+        // Function to highlight active classes
+        function highlightActiveClasses() {
+            const now = new Date();
+            const currentDay = getCurrentDayName();
+            
+            // Remove existing active borders
+            document.querySelectorAll('.event').forEach(event => {
+                event.classList.remove('active-class');
+            });
+            
+            // Find the current slide that matches today
+            const currentSlide = document.querySelector('.slide.active');
+            if (!currentSlide) return;
+            
+            // Check if current slide contains today's events
+            const dayColumns = currentSlide.querySelectorAll('.day-column');
+            
+            dayColumns.forEach(column => {
+                const dayHeader = column.querySelector('h2');
+                if (dayHeader && dayHeader.textContent.trim() === currentDay) {
+                    // This column contains today's events
+                    const events = column.querySelectorAll('.event');
+                    
+                    events.forEach(event => {
+                        // Find the time element within this event
+                        const timeElement = event.querySelector('.time');
+                        if (timeElement) {
+                            const timeText = timeElement.textContent.trim();
+                            try {
+                                const timeRange = parseTimeRange(timeText);
+                                if (isTimeInRange(timeRange, now)) {
+                                    event.classList.add('active-class');
+                                }
+                            } catch (error) {
+                                console.log('Could not parse time:', timeText);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Add CSS for active class highlighting
+        function addActiveClassStyles() {
+            const style = document.createElement('style');
+            style.textContent = `
+                .event.active-class {
+                    border: 4px solid #e74c3c !important;
+                    box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+                    animation: pulse 2s infinite;
+                }
+                
+                @keyframes pulse {
+                    0% { box-shadow: 0 0 10px rgba(231, 76, 60, 0.5); }
+                    50% { box-shadow: 0 0 20px rgba(231, 76, 60, 0.8); }
+                    100% { box-shadow: 0 0 10px rgba(231, 76, 60, 0.5); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Initialize the highlighting system
+        function initializeRealTimeHighlighting() {
+            // Add the CSS styles
+            addActiveClassStyles();
+            
+            // Run immediately
+            highlightActiveClasses();
+            
+            // Update every 30 seconds
+            setInterval(highlightActiveClasses, 30000);
+            
+            // Also update when slides change
+            const originalShowSlide = window.showSlide;
+            if (originalShowSlide) {
+                window.showSlide = function(index) {
+                    originalShowSlide(index);
+                    // Small delay to ensure slide is fully rendered
+                    setTimeout(highlightActiveClasses, 100);
+                };
+            }
+        }
+
+        // Start the system when page loads
+        document.addEventListener('DOMContentLoaded', initializeRealTimeHighlighting);
+
+        function updateFloatingClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const isPM = hours >= 12;
+            
+            // Convert to 12-hour format
+            if (hours === 0) {
+                hours = 12;
+            } else if (hours > 12) {
+                hours -= 12;
+            }
+            
+            // Update the clock elements
+            document.getElementById('clock-hours').textContent = hours;
+            document.getElementById('clock-minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('clock-period').textContent = isPM ? 'PM' : 'AM';
+        }
+
+        // Initialize clock and update every second
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFloatingClock();
+            setInterval(updateFloatingClock, 1000);
+        });
+    </script>
+</body>
+</html>
