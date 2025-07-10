@@ -13,15 +13,18 @@ A Flask-based web application that displays university course schedules, lab ses
 - **Time-based Announcements**: Displays relevant announcements based on current date
 - **Responsive Design**: Clean, readable interface suitable for kiosk displays
 - **Multiple View Modes**: Both paginated and simple view options
+- **Raspberry Pi Ready**: Automated installation script for dedicated kiosk deployment
 
 ## Quick Start
 
-### Prerequisites
+### For Development/Testing
+
+#### Prerequisites
 
 - Python 3.7 or higher
 - pip (Python package installer)
 
-### Installation
+#### Installation
 
 1. **Clone or download the project files** to your desired directory:
    ```bash
@@ -59,11 +62,61 @@ A Flask-based web application that displays university course schedules, lab ses
    - Main display (paginated): http://localhost:5000
    - Simple display: http://localhost:5000/simple
 
+### For Raspberry Pi Kiosk Deployment
+
+For a more detailed setup guide, see [Raspberry Pi Kiosk Display Setup Guide](./raspberry_pi_kiosk_setup.md)
+
+For a complete, production-ready kiosk setup on Raspberry Pi that automatically starts on boot:
+
+1. **Transfer your project files** to your Raspberry Pi
+
+2. **Make the installation script executable**:
+   ```bash
+   chmod +x install_kiosk.sh
+   ```
+
+3. **Run the automated installation script**:
+   ```bash
+   ./install_kiosk.sh
+   ```
+
+4. **Follow the prompts** to complete the installation
+
+5. **Add your CSV data files** to `/opt/kiosk-display/data/`
+
+6. **Reboot** to see the kiosk display start automatically:
+   ```bash
+   sudo reboot
+   ```
+
+The installation script will:
+- Install all required system packages and dependencies
+- Set up the Flask application as a systemd service
+- Configure Chromium to launch automatically in fullscreen kiosk mode
+- Optimize the system for kiosk display usage
+- Create backup and uninstall scripts for easy maintenance
+
+#### HDMI Display Issues?
+
+If your Raspberry Pi doesn't output to HDMI properly (especially with KVM switches, splitters, or some monitors), add this line to `/boot/config.txt`:
+
+```bash
+sudo nano /boot/config.txt
+```
+
+Add:
+```ini
+hdmi_force_hotplug=1
+```
+
+Then reboot. This forces HDMI output even when no display is detected at boot time.
+
 ## Project Structure
 
 ```
 your-project/
 ├── app.py                     # Main Flask application
+├── install_kiosk.sh          # Automated Raspberry Pi installation script
 ├── data/                      # Data directory
 │   ├── lecture_schedule.csv   # Lecture schedule data
 │   ├── lab_schedule.csv       # Lab schedule data
@@ -133,7 +186,7 @@ CSCI,1150,001,Using Information Tech Lab,M,08:55 am-10:15 am,"Chelsie Dubay, Rya
 
 ## Usage
 
-### Running the Application
+### Development Mode
 
 1. **Activate your virtual environment** (if not already activated):
    ```bash
@@ -153,6 +206,15 @@ CSCI,1150,001,Using Information Tech Lab,M,08:55 am-10:15 am,"Chelsie Dubay, Rya
    - Main kiosk display: http://localhost:5000
    - Simple view: http://localhost:5000/simple
 
+### Production Kiosk Mode (Raspberry Pi)
+
+After running the installation script:
+
+- **Check service status**: `sudo systemctl status kiosk-display`
+- **View logs**: `sudo journalctl -u kiosk-display -f`
+- **Restart service**: `sudo systemctl restart kiosk-display`
+- **Update data**: Copy new CSV files to `/opt/kiosk-display/data/`
+
 ### Display Features
 
 - **Automatic Pagination**: Days with many events are automatically split across slides
@@ -162,7 +224,7 @@ CSCI,1150,001,Using Information Tech Lab,M,08:55 am-10:15 am,"Chelsie Dubay, Rya
 
 ### Deployment Options
 
-#### For Production Deployment
+#### For Production Deployment (Non-Kiosk)
 
 1. **Use a production WSGI server** like Gunicorn:
    ```bash
@@ -174,7 +236,7 @@ CSCI,1150,001,Using Information Tech Lab,M,08:55 am-10:15 am,"Chelsie Dubay, Rya
 
 3. **Consider using systemd** or similar to manage the service
 
-#### For Kiosk Display
+#### For Kiosk Display (Manual Setup)
 
 1. **Set up auto-refresh** in your browser to reload the page periodically
 2. **Use fullscreen mode** for best kiosk experience
@@ -204,22 +266,43 @@ The application can be extended to read from databases or other data sources by 
 3. **Date parsing issues**: Check that date formats in CSV files match the expected MM/DD format
 4. **Display issues**: Verify that your HTML templates are properly configured
 
+### Raspberry Pi Kiosk Issues
+
+1. **Service won't start**: Check logs with `sudo journalctl -u kiosk-display`
+2. **Chromium won't launch**: Verify the start script is executable and Flask service is running
+3. **No HDMI output**: Add `hdmi_force_hotplug=1` to `/boot/config.txt` and reboot
+4. **Display turns off**: The installation script disables screen savers, but some displays may still power down
+
 ### Debug Mode
 
-The application runs in debug mode by default, which provides helpful error messages. For production, change:
-```python
-app.run(debug=False)
+The application runs in debug mode by default during development, which provides helpful error messages. For production, the installation script configures Gunicorn for better performance and reliability.
+
+## Maintenance
+
+### Updating Data
+
+For Raspberry Pi kiosk installations:
+```bash
+# Copy new CSV files to the data directory
+sudo cp your-new-files.csv /opt/kiosk-display/data/
+
+# The service will automatically pick up changes
 ```
 
-## Contributing
+### Backing Up Configuration
 
-When adding new features or modifying the application:
+The installation script creates a backup script at `/home/pi/backup_kiosk_config.sh`. Run it to create a backup of your current configuration:
+```bash
+/home/pi/backup_kiosk_config.sh
+```
 
-1. Test with sample data to ensure CSV parsing works correctly
-2. Verify that pagination handles edge cases (very busy days, empty days)
-3. Check that announcements display correctly across date boundaries
-4. Ensure the kiosk display remains readable and professional
+### Uninstalling
+
+To completely remove the kiosk installation:
+```bash
+/home/pi/uninstall_kiosk.sh
+```
 
 ## License
 
-This project is designed for educational use in university computing departments.
+Do whatever you want.
