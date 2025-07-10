@@ -134,7 +134,7 @@ def convert_time_to_24hr(time_str):
         print(f"Invalid time format: {time_str}")
         return "00:00"
 
-def paginate_schedule(schedule_by_day, ordered_days, max_events_per_day=8):
+def paginate_schedule(schedule_by_day, ordered_days, max_events_per_day=6):
     """
     Paginate schedule into slides based on max events per day
     Returns list of slide configurations

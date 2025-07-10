@@ -110,7 +110,7 @@
             
             {% for slide in slides %}
             <div class="slide {% if loop.first %}active{% endif %}">
-                {% if slide.days|length == 1 and slide.events[slide.days[0]]|length > 8 %}
+                {% if slide.days|length == 1 and slide.events[slide.days[0]]|length > 6 %}
                     <!-- Single day with more than 5 events - split into columns -->
                     <div class="screen-2-col">
                         {% set day = slide.days[0] %}
@@ -119,7 +119,7 @@
                         <!-- First column (events 0-4) -->
                         <div class="day-column">
                             <h2>{{ day }}</h2>
-                            {% for event in events[:8] %}
+                            {% for event in events[:6] %}
                             <div class="event {{ event.type | lower }}">
                                 <div class="row">
                                     <div class="col-60">
@@ -141,10 +141,10 @@
                             {% endfor %}
                         </div>
                         
-                        <!-- Second column (events 8+) -->
+                        <!-- Second column (events 6+) -->
                         <div class="day-column">
                             <h2>{{ day }}, continued</h2>
-                            {% for event in events[8:] %}
+                            {% for event in events[6:] %}
                             <div class="event {{ event.type | lower }}">
                                 <div class="row">
                                     <div class="col-60">
