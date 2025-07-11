@@ -1,7 +1,7 @@
 Subj,Crse,Sec,Title,Days,Time,Instructor,Location
-CSCI,1100,1,Using Info Tech Lecture,M,08:15 am-10:15 am,Chelsie Dubay,Rogers Stout Hall 118
-CSCI,1100,2,Using Info Tech Lecture,T,02:55 pm-04:55 pm,Michael Lehrfeld,Brown Hall 370
-CSCI,1100,3,Using Info Tech Lecture,W,09:30 am-11:30 am,Ryan Haas,Rogers Stout Hall 118
-CSCI,1100,4,Using Info Tech Lecture,W,02:00 pm-04:00 pm,TBA,Ball Hall 127
-CSCI,1100,5,Using Info Tech Lecture,T,09:30 am-11:30 am,Ryan Haas,Brinkley Center 137B
+CSCI,1100,001,Using Info Tech Lecture,M,08:15 am-10:15 am,Chelsie Dubay,Rogers Stout Hall 118
+CSCI,1100,002,Using Info Tech Lecture,T,02:55 pm-04:55 pm,Michael Lehrfeld,Brown Hall 370
+CSCI,1100,003,Using Info Tech Lecture,W,09:30 am-11:30 am,Ryan Haas,Rogers Stout Hall 118
+CSCI,1100,004,Using Info Tech Lecture,W,02:00 pm-04:00 pm,TBA,Ball Hall 127
+CSCI,1100,005,Using Info Tech Lecture,T,09:30 am-11:30 am,Ryan Haas,Brinkley Center 137B
 CSCI,1100,201,Using Info Tech Lecture,M,05:00 pm-07:00 pm,Ryan Haas,Rogers Stout Hall 102

@@ -56,8 +56,8 @@ def _get_current_announcement(announcements):
 
 def _standardize_uit_name(event):
     if event['title'].lower().startswith('using info'):
-        event['title'] = 'CSCI 1150 (Lab)'
-        if event['type'] == 'Lecture': event['title'] = 'CSCI 1100 (Lecture)'
+        event['title'] = 'CSCI-1150'
+        if event['type'] == 'Lecture': event['title'] = 'CSCI-1100'
     return event
 
 # Helper functions to parse the CSV files

@@ -120,8 +120,9 @@
                             {% for event in events[:6] %}
                             <div class="event {{ event.type | lower }}">
                                 <div class="row">
+                                    <span style="float: left; top: 0; font-size: 0.6em">{{ event.type }}&ensp;</span>
                                     <div class="col-60">
-                                        <span class="title">{{ event.title }}</span>
+                                        <span class="title">{{ event.title }}-{{ event.sec }}</span>
                                     </div>
                                     <div class="col-40">
                                         <i class="bi bi-person-fill"></i>&ensp;<span class="instructor">{{ event.instructor }}</span>
@@ -145,8 +146,9 @@
                             {% for event in events[6:] %}
                             <div class="event {{ event.type | lower }}">
                                 <div class="row">
+                                    <span style="float: left; top: 0; font-size: 0.6em">{{ event.type }}&ensp;</span>
                                     <div class="col-60">
-                                        <span class="title">{{ event.title }}</span>
+                                        <span class="title">{{ event.title }}-{{ event.sec }}</span>
                                     </div>
                                     <div class="col-40">
                                         <i class="bi bi-person-fill"></i>&ensp;<span class="instructor">{{ event.instructor }}</span>
@@ -173,8 +175,9 @@
                             {% for event in slide.events[day] %}
                             <div class="event {{ event.type | lower }}">
                                 <div class="row">
+                                    <span style="float: left; top: 0; font-size: 0.6em">{{ event.type }}&ensp;</span>
                                     <div class="col-60">
-                                        <span class="title">{{ event.title }}</span>
+                                        <span class="title">{{ event.title }}-{{ event.sec }}</span>
                                     </div>
                                     <div class="col-40">
                                         <i class="bi bi-person-fill"></i>&ensp;<span class="instructor">{{ event.instructor }}</span>
