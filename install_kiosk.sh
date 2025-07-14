@@ -245,6 +245,8 @@ configure_lxde() {
 @xset s off
 @xset -dpms
 @xset s noblank
+@unclutter -idle 0.5
+
 EOF
     
     log_success "LXDE session configured"
