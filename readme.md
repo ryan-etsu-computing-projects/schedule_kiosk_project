@@ -262,7 +262,8 @@ The application can be extended to read from databases or other data sources by 
 1. **Import errors**: Make sure your virtual environment is activated and dependencies are installed
 2. **File not found errors**: Ensure the `data/` directory exists and contains the required CSV files
 3. **Date parsing issues**: Check that date formats in CSV files match the expected MM/DD format
-4. **Display issues**: Verify that your HTML templates are properly configured
+4. **Display issues**: Verify that your HTML templates are properly configured\
+5. **Emojis don't display in Chromium**: `sudo apt install fonts-noto-color-emoji; fc-cache -f -v; reboot`
 
 ### Raspberry Pi Kiosk Issues
 
