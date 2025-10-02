@@ -2,4 +2,3 @@
 *pyc*
 .env
 *.vs*
-db.sqlite

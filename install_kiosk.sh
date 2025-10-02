@@ -60,7 +60,7 @@ update_system() {
 # Install required packages
 install_packages() {
     log_info "Installing required packages..."
-    sudo apt install -y python3-pip python3-venv git chromium-browser unclutter curl xdotool
+    sudo apt install -y python3-pip python3-venv git chromium-browser unclutter curl xdotool fonts-noto-color-emoji
     log_success "Required packages installed"
 }
 
